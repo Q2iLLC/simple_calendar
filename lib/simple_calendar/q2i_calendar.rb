@@ -29,28 +29,40 @@ module SimpleCalendar
       week_number + number_of_weeks - 1
     end
 
+    def default_calendar_param
+      options.fetch(:default_calendar_param, :default_calendar).to_sym
+    end
+
+    def default_calendar
+      if options.has_key?(:default_calendar)
+        options.fetch(:default_calendar)
+      else
+        view_context.params.fetch(default_calendar_param, 'month')
+      end
+    end
+
     def month_url_for_next_view
-      view_context.url_for(@params.merge(start_date_param => month_date_range.last + 1.day))
+      view_context.url_for(@params.merge(start_date_param => month_date_range.last + 1.day, default_calendar_param => 'month'))
     end
 
     def month_url_for_previous_view
-      view_context.url_for(@params.merge(start_date_param => month_date_range.first - 1.day))
+      view_context.url_for(@params.merge(start_date_param => month_date_range.first - 1.day, default_calendar_param => 'month'))
     end
 
     def week_url_for_next_view
-      view_context.url_for(@params.merge(start_date_param => week_date_range.last + 1.day))
+      view_context.url_for(@params.merge(start_date_param => week_date_range.last + 1.day, default_calendar_param => 'week'))
     end
 
     def week_url_for_previous_view
-      view_context.url_for(@params.merge(start_date_param => week_date_range.first - 1.day))
+      view_context.url_for(@params.merge(start_date_param => week_date_range.first - 1.day, default_calendar_param => 'week'))
     end
 
     def day_url_for_next_view
-      view_context.url_for(@params.merge(start_date_param => start_date + 1.day))
+      view_context.url_for(@params.merge(start_date_param => start_date + 1.day, default_calendar_param => 'day'))
     end
 
     def day_url_for_previous_view
-      view_context.url_for(@params.merge(start_date_param => start_date - 1.day))
+      view_context.url_for(@params.merge(start_date_param => start_date - 1.day, default_calendar_param => 'day'))
     end
 
     def month_date_range
@@ -62,6 +74,21 @@ module SimpleCalendar
       ending = (starting + (number_of_weeks - 1).weeks).end_of_week
 
       (starting..ending).to_a
+    end
+
+    def event_type_color(event_type_id)
+      case event_type_id
+      when 1
+        'blue'
+      when 2
+        'grey'
+      when 3
+        'red'
+      when 4
+        'purple'
+      else
+        nil
+      end
     end
   end
 end
