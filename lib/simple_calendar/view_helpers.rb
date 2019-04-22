@@ -19,5 +19,10 @@ module SimpleCalendar
       raise 'q2i_calendar requires a block' unless block_given?
       SimpleCalendar::Q2iCalendar.new(self, options).render(&block)
     end
+
+    def casa_calendar(options={}, &block)
+      raise 'casa_calendar requires a block' unless block_given?
+      SimpleCalendar::CASACalendar.new(self, options).render(&block)
+    end
   end
 end

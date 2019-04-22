@@ -1,0 +1,167 @@
+<ul class="nav nav-tabs" style="text-align:center;">
+	<!--<li><a data-toggle="tab" href="#today_calendar">Today</a></li>-->
+	<%= content_tag :li, class: "#{'active' if calendar.default_calendar == 'day'}" do %>
+		<a data-toggle="tab" href="#day_calendar">Day</a>
+	<% end %>
+	<%= content_tag :li, class: "#{'active' if calendar.default_calendar == 'week'}" do %>
+		<a data-toggle="tab" href="#week_calendar">Week</a></li>
+	<% end %>
+	<%= content_tag :li, class: "#{'active' if calendar.default_calendar == 'month'}" do %>
+		<a data-toggle="tab" href="#month_calendar">Month</a>
+	<% end %>
+	<!--<<li><a data-toggle="tab" href="#agenda_calendar">Agenda</a></li>-->
+</ul>
+
+<div class="tab-content">
+	<div id = "today_calendar" class="tab-pane fade">
+		Today
+	</div>
+	<%= content_tag :div, id: 'day_calendar', class: "tab-pane fade #{'active in' if calendar.default_calendar == 'day'}" do %>
+		<div class="simple-calendar" style="min-height: 593px;background-color:white;">
+			<div class="calendar-heading">
+				<%= link_to t('simple_calendar.previous', default: 'Previous'), calendar.day_url_for_previous_view %>
+				<span class="calendar-title">
+					<%= t('date.month_names')[start_date.month] %>-<%= start_date.year %>-<% block.call start_date, sorted_events.fetch(start_date, []) %>
+				</span>
+				<%= link_to t('simple_calendar.next', default: 'Next'), calendar.day_url_for_next_view %>
+			</div>
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							Time
+						</th>
+						<th>
+							Name
+						</th>
+						<th>
+							Patient
+						</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<% sorted_events.fetch(start_date, []).each do |event| %>
+						<tr>
+							<%= content_tag :td do %>
+								<%= link_to event.start_time.strftime("%l:%M %p"), "/events/#{event.id}/edit", data: {behavior: 'modal'} %>
+							<% end %>
+							<%= content_tag :td do %>
+								<%= event.title %>
+							<% end %>
+						</tr>
+					<% end %>
+				</tbody>
+			</table>
+		</div>
+	<% end %>
+	<%= content_tag :div, id: 'week_calendar', class: "tab-pane fade #{'active in' if calendar.default_calendar == 'week'}" do %>
+		<div class="simple-calendar">
+			<div class="calendar-heading">
+				<%= link_to t('simple_calendar.previous', default: 'Previous'), calendar.week_url_for_previous_view %>
+				<span class="calendar-title"><%= t('date.month_names')[start_date.month] %> <%= start_date.year %> - Week <%= calendar.week_number %></span>
+				<%= link_to t('simple_calendar.next', default: 'Next'), calendar.week_url_for_next_view %>
+			</div>
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<% week_date_range.slice(0, 7).each do |day| %>
+							<th><%= t('date.abbr_day_names')[day.wday] %></th>
+						<% end %>
+					</tr>
+				</thead>
+
+				<tbody>
+					<% week_date_range.each_slice(7) do |week| %>
+						<tr>
+							<% week.each do |day| %>
+								<%= content_tag :td, style: 'height: 523px;' do %>	
+									<% if defined?(Haml) && respond_to?(:block_is_haml?) && block_is_haml?(block) %>
+										<% capture_haml(day, sorted_events.fetch(day, []), &block) %>
+									<% else %>
+										<% block.call day, sorted_events.fetch(day, []) %>
+									<% end %>				
+									<% sorted_events.fetch(day, []).each do |event| %>
+										<div>
+											<%= link_to event.start_time.strftime("%l:%M %p"), "/events/#{event.id}/edit", data: {behavior: 'modal'}, class: 'event_style' %>
+										</div>
+									<% end %>
+								<% end %>
+							<% end %>
+						</tr>
+					<% end %>
+				</tbody>
+			</table>
+		</div>
+	<% end %>
+	<%= content_tag :div, id: 'month_calendar', class: "tab-pane fade #{'active in' if calendar.default_calendar == 'month'}" do %>
+		<div class="simple-calendar">
+			<div class="calendar-heading">
+				<%= link_to t('simple_calendar.previous', default: 'Previous'), calendar.month_url_for_previous_view %>
+				<span class="calendar-title"><%= t('date.month_names')[start_date.month] %> <%= start_date.year %></span>
+				<%= link_to t('simple_calendar.next', default: 'Next'), calendar.month_url_for_next_view %>
+			</div>
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<% month_date_range.slice(0, 7).each do |day| %>
+							<th><%= t('date.abbr_day_names')[day.wday] %></th>
+						<% end %>
+					</tr>
+				</thead>
+
+				<tbody>
+					<% month_date_range.each_slice(7) do |week| %>
+						<tr>
+						<% week.each do |day| %>
+							<%= content_tag :td, class: calendar.td_classes_for(day), style: 'height: 100px;' do %>
+								<% if defined?(Haml) && respond_to?(:block_is_haml?) && block_is_haml?(block) %>
+									<% capture_haml(day, sorted_events.fetch(day, []), &block) %>
+								<% else %>
+									<% block.call day, sorted_events.fetch(day, []) %>
+								<% end %>
+
+
+								<% sorted_events.fetch(day, [])[0..2].each do |event| %>
+									<div>
+										<%= link_to event.start_time.strftime("%l:%M %p"), "/events/#{event.id}/edit", data: {behavior: 'modal'}, class: 'event_style' %>
+									</div>
+								<% end %>
+								<% if sorted_events.fetch(day, []).count > 3 %>
+								    <div class="dropdown">
+								        <%= link_to ('+' + (sorted_events.fetch(day, []).count - 3).to_s), '#', class: 'event_style dropdown-toggle', data: {toggle: 'dropdown'} %>
+								        <ul class="<%= day.wday < 3  ? 'dropdown-menu dropdown-menu-left' :  (day.wday > 3 ? 'dropdown-menu dropdown-menu-right' : 'dropdown-menu') %>" style="padding: 5px; background-color: white;">
+								            <li style="padding: 5px;"><%= day.strftime("%A") %></li>   
+								            <li style="font-size: 2em;padding: 5px;"><%= day.day %></li> 
+								            <% sorted_events.fetch(day, []).last(sorted_events.fetch(day, []).count - 3).each do |event| %>
+								                <li>   
+								                    <%= link_to event.start_time.strftime("%l:%M %p"),"/events/#{event.id}/edit", data: {behavior: 'modal'}, class: 'event_style' %>
+								                </li>
+								            <% end %>
+								        </ul>
+								    </div>
+								<% end %>
+
+
+							<% end %>
+						<% end %>
+						</tr>
+					<% end %>
+				</tbody>
+			</table>
+		</div>	
+	<% end %>
+	<div id = "agenda_calendar" class="tab-pane fade">
+		Agenda
+	</div>
+</div>
+<script>
+	$(".nav-tabs a").click(function(){
+	 	$(this).tab('show');
+	});
+</script>
+
+
