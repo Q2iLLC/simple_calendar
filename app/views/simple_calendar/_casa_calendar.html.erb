@@ -42,10 +42,15 @@
 					<% sorted_events.fetch(start_date, []).each do |event| %>
 						<tr>
 							<%= content_tag :td do %>
-								<%= link_to event.start_time.strftime("%l:%M %p"), "/events/#{event.id}/edit", data: {behavior: 'modal'} %>
+								<%= link_to "/events/#{event.id}/edit", data: {behavior: 'modal'}  do %>
+			                    	<%= event.start_date_time.strftime("%l:%M %p") %>
+				                    <% if event.tele %>
+				                    	<i class="fa fa-camera">&nbsp;</i>
+				                    <% end %>
+				                <% end %>
 							<% end %>
 							<%= content_tag :td do %>
-								<%= event.title %>
+								<%= event.title %> 
 							<% end %>
 						</tr>
 					<% end %>
@@ -82,7 +87,12 @@
 									<% end %>				
 									<% sorted_events.fetch(day, []).each do |event| %>
 										<div>
-											<%= link_to event.start_time.strftime("%l:%M %p"), "/events/#{event.id}/edit", data: {behavior: 'modal'}, class: 'event_style' %>
+											<%= link_to  "/events/#{event.id}/edit", data: {behavior: 'modal'}, class: 'event_style' do %>
+						                    	<%= event.start_date_time.strftime("%l:%M %p") %>
+							                    <% if event.tele %>
+							                    	<i class="fa fa-camera">&nbsp;</i>
+							                    <% end %>
+							                <% end %>
 										</div>
 									<% end %>
 								<% end %>
@@ -124,7 +134,12 @@
 
 								<% sorted_events.fetch(day, [])[0..2].each do |event| %>
 									<div>
-										<%= link_to event.start_time.strftime("%l:%M %p"), "/events/#{event.id}/edit", data: {behavior: 'modal'}, class: 'event_style' %>
+										<%= link_to "/events/#{event.id}/edit", data: {behavior: 'modal'}, class: 'event_style' do %>
+					                    	<%= event.start_date_time.strftime("%l:%M %p") %>
+						                    <% if event.tele %>
+						                    	<i class="fa fa-camera">&nbsp;</i>
+						                    <% end %>
+						                <% end %>
 									</div>
 								<% end %>
 								<% if sorted_events.fetch(day, []).count > 3 %>
@@ -135,7 +150,12 @@
 								            <li style="font-size: 2em;padding: 5px;"><%= day.day %></li> 
 								            <% sorted_events.fetch(day, []).last(sorted_events.fetch(day, []).count - 3).each do |event| %>
 								                <li>   
-								                    <%= link_to event.start_time.strftime("%l:%M %p"),"/events/#{event.id}/edit", data: {behavior: 'modal'}, class: 'event_style' %>
+								                    <%= link_to "/events/#{event.id}/edit", data: {behavior: 'modal'}, class: 'event_style' do %>
+								                    	<%= event.start_date_time.strftime("%l:%M %p") %>
+									                    <% if event.tele %>
+									                    	<i class="fa fa-camera">&nbsp;</i>
+									                    <% end %>
+									                <% end %>
 								                </li>
 								            <% end %>
 								        </ul>
