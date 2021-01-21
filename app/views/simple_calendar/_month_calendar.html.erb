@@ -1,11 +1,11 @@
 <div class="simple-calendar">
   <div class="calendar-heading">
     <%= link_to calendar.url_for_previous_view do %>
-      <i class="fa fa-less-than"></i>
+      <i class="fa fa-caret-left" style="margin-right: 10px;"></i>
     <% end %>
-    <span class="calendar-title"><%= t('date.month_names')[start_date.month] %> <%= start_date.year %></span>
+    <span class="calendar-title" style="font-size: 20px;"><%= t('date.month_names')[start_date.month] %> <%= start_date.year %></span>
     <%= link_to calendar.url_for_next_view do %>
-      <i class="fa fa-greater-than"></i>
+      <i class="fa fa-caret-right" style="margin-left: 10px;"></i>
     <% end %>
   </div>
 
